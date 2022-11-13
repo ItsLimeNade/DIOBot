@@ -1,0 +1,31 @@
+{
+  "name": "diobot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItsLimeNade/DIOBot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ItsLimeNade/DIOBot/issues"
+  },
+  "homepage": "https://github.com/ItsLimeNade/DIOBot#readme",
+  "dependencies": {
+    "@frostzzone/discord-sync-commands": "^0.3.0",
+    "better-sqlite3": "^7.6.2",
+    "canvacord": "^5.4.8",
+    "canvas": "^2.10.2",
+    "discord-canvas": "^1.5.2",
+    "discord.js": "^13.12.0",
+    "dotenv": "^16.0.3",
+    "quick.db": "^9.0.6",
+    "ultrax": "^2.0.5"
+  }
+}
