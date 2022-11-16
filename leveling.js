@@ -48,7 +48,8 @@ class Leveling {
             await db.set(dbKey, userData)
         }
 
-        console.log(await db.get(dbKey))
+        await db.get(dbKey)
+        return true
 
     }
     async setXpRate(userID, guildID, newXpRate) {
@@ -77,7 +78,7 @@ class Leveling {
         let userData = await db.get(dbKey)
         userData.xpRate = newXpRate
         await db.set(dbKey, userData)
-        console.log(await db.get(dbKey))
+        return true
 
     }
     async deleteUserData(userID, guildID) {
@@ -89,10 +90,12 @@ class Leveling {
             return console.error(new Error('MinusJs Error: Wrong database entry given, cannot delete an unexisting entry.'))
         }
         await db.delete(dbKey)
+        return true
     }
 
     async clearDatabase() {
         await db.deleteAll() //Dangerous method lol
+        return true
     }
 
     async getUserLevel(userID, guildID) {
@@ -160,6 +163,30 @@ class Leveling {
         slicedArray.forEach(element => returedArray.push({ userID: element.value.userID, level: element.value.currentLevel, xp: element.value.currentXP }))
         console.log(returedArray)
         return returedArray
+    }
+    async setXP(userID, guildID, xp) {
+        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!xp) return console.error(new Error('MinusJs Error: XP was not povided.'))
+
+        const dbKey = `${userID}-${guildID}-minusJsLeveling`
+        userData = await db.get(dbKey)
+        userData.currentXP = xp
+        await db.set(dbKey, userData)
+        return true
+    }
+
+    async setLevel(userID, guildID, level) {
+        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!level) return console.error(new Error('MinusJs Error: Level was not povided.'))
+
+        const dbKey = `${userID}-${guildID}-minusJsLeveling`
+
+        userData = await db.get(dbKey)
+        userData.currentLevel = level
+        await db.set(dbKey, userData)
+        return true
     }
 }
 

@@ -1,3 +1,6 @@
+const { QuickDB } = require('quick.db')
+let db = new QuickDB({ filePath: 'moderation.sqlite' });
+
 (async () => {
     const env = require('dotenv')
     env.config()
@@ -84,6 +87,38 @@
         options: [
 
         ]
+    }, {
+        name: 'suggest',
+        description: 'Creates a suggestion',
+        options: [{
+            type: 3,
+            name: 'title',
+            required: true,
+            description: 'Set the title of this suggestion',
+            choices: [
+
+            ]
+        }, {
+            type: 3,
+            name: 'description',
+            required: true,
+            description: 'Set the description of this suggestion',
+            choices: [
+
+            ]
+        },]
+    }, {
+        name: 'clear',
+        description: 'Clears messages from chat (u need admin for it idiot)',
+        options: [{
+            type: 4,
+            name: 'messages',
+            required: false,
+            description: 'Number of messages to clear',
+            choices: [
+
+            ]
+        },]
     },], {
         debug: false,
 
@@ -132,6 +167,38 @@
             await interaction.reply({
                 content: message,
                 ephemeral: true
+            });
+        }
+
+        if ((interaction.commandName) == 'suggest') {
+            let title = (interaction.options.getString('title'))
+            let description = (interaction.options.getString('description'))
+
+            let embed = new MessageEmbed()
+                .setTitle(interaction.user.username + " posted a new suggestion.")
+                .setAuthor("New Suggestion!")
+                .setThumbnail(interaction.user.displayAvatarURL({ format: 'png' }))
+                .setTimestamp(Date.now())
+                .setColor('#86A3C3')
+                .setFields({
+                    name: title, value: description
+                })
+            await interaction.reply({
+                ephemeral: true,
+                content: 'Suggestion Sent Succesfuly!'
+            })
+            const message = await s4d.client.channels.cache.get('1041108346398314616').send({ embeds: [embed] })
+            message.react("🔼")
+            message.react("🔽")
+        }
+        if ((interaction.commandName) == 'clear' && (interaction.member).permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+            let arguments2 = (interaction.options.getInteger('messages'));
+            if (arguments2 < 100 && arguments2 > 0) { (interaction.channel).bulkDelete((arguments2 | 1)) } else { interaction.channel.bulkDelete(1) }
+
+            await interaction.reply({
+                content: (['Deleted ', arguments2, ' messages on the channel!'].join('')),
+                ephemeral: true,
+                components: []
             });
         }
     })
