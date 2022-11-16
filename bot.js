@@ -1,6 +1,3 @@
-const { QuickDB } = require('quick.db')
-let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
-
 (async () => {
     const env = require('dotenv')
     env.config()
@@ -11,6 +8,7 @@ let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
     const { exec } = require("child_process")
     const Discord = require("discord.js")
     const Leveling = require('./leveling')
+    const Warnings = require('./warnings')
     const {
         MessageEmbed,
         MessageButton,
@@ -60,6 +58,7 @@ let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
     // code
 
     let leveling = new Leveling(0, 100, 1, 1, 1, 1.2) //Params in order: startingXP: any, neededXP: any, gainedXP: any, xpRate: any, startingLevel: any, levelingRate: any
+    let warnings = new Warnings(3)
 
     await s4d.client.login(process.env.TOKEN)
 
@@ -121,6 +120,18 @@ let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
 
             ]
         },]
+    }, {
+        name: 'warns',
+        description: 'Looks at the warns of a user.',
+        options: [{
+            type: 6,
+            name: 'user',
+            required: true,
+            description: 'User to check its warns.',
+            choices: [
+
+            ]
+        }]
     },], {
         debug: false,
 
@@ -209,16 +220,11 @@ let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
             const reason = interaction.options.getString('reason')
             dbKey = `${warnedMember.id}-${interaction.guild.id}-warns`
             if (!warnedMember.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
-                if (!await warnsDb.has(dbKey)) {
-                    await warnsDb.set(dbKey, { warns: 0, reasons: [] }) /* Todo: Add Warnings to MinusJs */
-                }
-                let warnsData = await warnsDb.get(dbKey)
-                warnsData.warns += 1
-                warnsData.reasons.push(reason)
-                await warnsDb.set(dbKey, warnsData)
+
+                await warnings.warn(warnedMember.id, interaction.guild.id, reason)
 
                 await interaction.reply({
-                    content: `Successfuly warned ${warnedMember} for reason ${reason}. \nTotal user warns: ${warnsData.warns}`,
+                    content: `Successfuly warned ${warnedMember} for reason ${reason}. \nTotal user warns: ${await warnings.getUserWarns(warnedMember.id, interaction.guild.id)}`,
                     ephemeral: true
                 })
             } else if (warnedMember.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
@@ -227,6 +233,22 @@ let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
                     ephemeral: true
                 })
             }
+        }
+        if ((interaction.commandName) == 'warns') {
+            let user = (interaction.options.getMember('user'))
+            let warns = await warnings.getUserWarns(user.id, interaction.guild.id)
+            let reasons = await warnings.getUserReasons(user.id, interaction.guild.id)
+            let [message, count] = [[`Total warns: ${warns}`], 1]
+            reasons.forEach(element => {
+                message.push(`Warn #${count} | Reason: ${element}`)
+                count++
+            })
+            message = message.join('\n')
+            await interaction.reply({
+                content: message,
+                ephemeral: true
+            })
+
         }
     })
 
