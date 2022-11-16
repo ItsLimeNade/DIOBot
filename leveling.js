@@ -4,12 +4,12 @@ let db = new QuickDB()
 class Leveling {
 
     constructor(startingXP, neededXP, gainedXP, xpRate, startingLevel, levelingRate) {
-        if (typeof startingXP != "number") return console.error(new Error('MinusJs Error: Starting XP must be a number'))
-        if (typeof neededXP != "number") return console.error(new Error('MinusJs Error: Needed XP must be a number'))
-        if (typeof gainedXP != "number") return console.error(new Error('MinusJs Error: Gained XP must be a number'))
-        if (typeof xpRate != "number") return console.error(new Error('MinusJs Error: XP Rate must be a number'))
-        if (typeof levelingRate != "number") return console.error(new Error('MinusJs Error: Leveling Rate must be a number'))
-        if (typeof startingLevel != "number") return console.error(new Error('MinusJs Error: Starting Level must be a number'))
+        if (typeof startingXP != "number") return console.error(new Error('MinusJs/Leveling Error: Starting XP must be a number'))
+        if (typeof neededXP != "number") return console.error(new Error('MinusJs/Leveling Error: Needed XP must be a number'))
+        if (typeof gainedXP != "number") return console.error(new Error('MinusJs/Leveling Error: Gained XP must be a number'))
+        if (typeof xpRate != "number") return console.error(new Error('MinusJs/Leveling Error: XP Rate must be a number'))
+        if (typeof levelingRate != "number") return console.error(new Error('MinusJs/Leveling Error: Leveling Rate must be a number'))
+        if (typeof startingLevel != "number") return console.error(new Error('MinusJs/Leveling Error: Starting Level must be a number'))
 
         this.startingXP = startingXP
         this.neededXP = neededXP
@@ -20,8 +20,8 @@ class Leveling {
     }
 
     async checkData(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
 
         if (!await db.has(dbKey)) {
@@ -53,9 +53,9 @@ class Leveling {
 
     }
     async setXpRate(userID, guildID, newXpRate) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
-        if (!newXpRate) return console.error(new Error('MinusJs Error: XP Rate was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
+        if (!newXpRate) return console.error(new Error('MinusJs/Leveling Error: XP Rate was not povided.'))
         if (typeof newXpRate != "number") return console.error(new Error('MinusJs Error: XP Rate must be a number'))
 
 
@@ -82,12 +82,12 @@ class Leveling {
 
     }
     async deleteUserData(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
 
         if (!await db.has(dbKey)) {
-            return console.error(new Error('MinusJs Error: Wrong database entry given, cannot delete an unexisting entry.'))
+            return console.error(new Error('MinusJs/Leveling Error: Wrong database entry given, cannot delete an unexisting entry.'))
         }
         await db.delete(dbKey)
         return true
@@ -99,48 +99,48 @@ class Leveling {
     }
 
     async getUserLevel(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData.currentLevel
     }
 
     async getUserXp(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData.currentXP
     }
 
     async getUserNeededXp(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData.neededXP
     }
 
     async getUserXpRate(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData.xpRate
     }
 
     async getUserLevelingRate(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData.levelingRate
     }
 
     async getUserData(userID, guildID) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData
@@ -151,7 +151,7 @@ class Leveling {
     }
 
     async getLeaderboard(numberOfUsers) {
-        if (typeof numberOfUsers != "number") return console.error(new Error('MinusJs Error: Number of users must be a number'))
+        if (typeof numberOfUsers != "number") return console.error(new Error('MinusJs/Leveling Error: Number of users must be a number'))
         let lDta = numberOfUsers ? numberOfUsers : 10
         let leaderboardData = await db.all()
         function sorting(a, b) {
@@ -161,13 +161,12 @@ class Leveling {
         const slicedArray = leaderboardData.slice(0, lDta);
         let returedArray = []
         slicedArray.forEach(element => returedArray.push({ userID: element.value.userID, level: element.value.currentLevel, xp: element.value.currentXP }))
-        console.log(returedArray)
         return returedArray
     }
     async setXP(userID, guildID, xp) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
-        if (!xp) return console.error(new Error('MinusJs Error: XP was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
+        if (!xp) return console.error(new Error('MinusJs/Leveling Error: XP was not povided.'))
 
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         userData = await db.get(dbKey)
@@ -177,9 +176,9 @@ class Leveling {
     }
 
     async setLevel(userID, guildID, level) {
-        if (!userID) return console.error(new Error('MinusJs Error: User ID was not povided.'))
-        if (!guildID) return console.error(new Error('MinusJs Error: Guild ID was not povided.'))
-        if (!level) return console.error(new Error('MinusJs Error: Level was not povided.'))
+        if (!userID) return console.error(new Error('MinusJs/Leveling Error: User ID was not povided.'))
+        if (!guildID) return console.error(new Error('MinusJs/Leveling Error: Guild ID was not povided.'))
+        if (!level) return console.error(new Error('MinusJs/Leveling Error: Level was not povided.'))
 
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
 

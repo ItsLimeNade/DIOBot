@@ -1,5 +1,5 @@
 const { QuickDB } = require('quick.db')
-let db = new QuickDB({ filePath: 'moderation.sqlite' });
+let warnsDb = new QuickDB({ filePath: 'moderation.sqlite' });
 
 (async () => {
     const env = require('dotenv')
@@ -66,9 +66,6 @@ let db = new QuickDB({ filePath: 'moderation.sqlite' });
     synchronizeSlashCommands(s4d.client, [{
         name: 'ping',
         description: 'Tells you the bot ping',
-        options: [
-
-        ]
     }, {
         name: 'level',
         description: 'Shows you your current level',
@@ -77,16 +74,10 @@ let db = new QuickDB({ filePath: 'moderation.sqlite' });
             name: 'member',
             required: true,
             description: 'see the level of an other user',
-            choices: [
-
-            ]
         },]
     }, {
         name: 'leaderboard',
         description: 'Displays the server leaderboard',
-        options: [
-
-        ]
     }, {
         name: 'suggest',
         description: 'Creates a suggestion',
@@ -95,17 +86,11 @@ let db = new QuickDB({ filePath: 'moderation.sqlite' });
             name: 'title',
             required: true,
             description: 'Set the title of this suggestion',
-            choices: [
-
-            ]
         }, {
             type: 3,
             name: 'description',
             required: true,
             description: 'Set the description of this suggestion',
-            choices: [
-
-            ]
         },]
     }, {
         name: 'clear',
@@ -115,6 +100,23 @@ let db = new QuickDB({ filePath: 'moderation.sqlite' });
             name: 'messages',
             required: false,
             description: 'Number of messages to clear',
+        },]
+    }, {
+        name: 'warn',
+        description: 'Warns a user.',
+        options: [{
+            type: 6,
+            name: 'user',
+            required: true,
+            description: 'User to warn.',
+            choices: [
+
+            ]
+        }, {
+            type: 3,
+            name: 'reason',
+            required: true,
+            description: 'Reason for the warn',
             choices: [
 
             ]
@@ -191,7 +193,7 @@ let db = new QuickDB({ filePath: 'moderation.sqlite' });
             message.react("🔼")
             message.react("🔽")
         }
-        if ((interaction.commandName) == 'clear' && (interaction.member).permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+        if ((interaction.commandName) == 'clear' && (interaction.member).permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
             let arguments2 = (interaction.options.getInteger('messages'));
             if (arguments2 < 100 && arguments2 > 0) { (interaction.channel).bulkDelete((arguments2 | 1)) } else { interaction.channel.bulkDelete(1) }
 
@@ -200,6 +202,31 @@ let db = new QuickDB({ filePath: 'moderation.sqlite' });
                 ephemeral: true,
                 components: []
             });
+        }
+
+        if (interaction.commandName == 'warn' && interaction.member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+            const warnedMember = interaction.options.getMember('user')
+            const reason = interaction.options.getString('reason')
+            dbKey = `${warnedMember.id}-${interaction.guild.id}-warns`
+            if (!warnedMember.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+                if (!await warnsDb.has(dbKey)) {
+                    await warnsDb.set(dbKey, { warns: 0, reasons: [] }) /* Todo: Add Warnings to MinusJs */
+                }
+                let warnsData = await warnsDb.get(dbKey)
+                warnsData.warns += 1
+                warnsData.reasons.push(reason)
+                await warnsDb.set(dbKey, warnsData)
+
+                await interaction.reply({
+                    content: `Successfuly warned ${warnedMember} for reason ${reason}. \nTotal user warns: ${warnsData.warns}`,
+                    ephemeral: true
+                })
+            } else if (warnedMember.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+                await interaction.reply({
+                    content: `Cannot warn immunized ${warnedMember}!`,
+                    ephemeral: true
+                })
+            }
         }
     })
 
