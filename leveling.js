@@ -31,7 +31,9 @@ class Leveling {
                 gainedXP: this.gainedXP,
                 xpRate: this.xpRate,
                 levelingRate: this.levelingRate,
-                currentLevel: this.startingLevel
+                currentLevel: this.startingLevel,
+                userID: userID,
+                guildID: guildID
             })
         }
 
@@ -65,7 +67,9 @@ class Leveling {
                 gainedXP: this.gainedXP,
                 xpRate: this.xpRate,
                 levelingRate: this.levelingRate,
-                currentLevel: this.startingLevel
+                currentLevel: this.startingLevel,
+                userID: userID,
+                guildID: guildID
             })
         }
 
@@ -137,6 +141,25 @@ class Leveling {
         const dbKey = `${userID}-${guildID}-minusJsLeveling`
         let userData = await db.get(dbKey)
         return userData
+    }
+
+    async getAllData() {
+        return await db.all()
+    }
+
+    async getLeaderboard(numberOfUsers) {
+        if (typeof numberOfUsers != "number") return console.error(new Error('MinusJs Error: Number of users must be a number'))
+        let lDta = numberOfUsers ? numberOfUsers : 10
+        let leaderboardData = await db.all()
+        function sorting(a, b) {
+            return (a.value.currentLevel + a.value.currentXP) - (b.value.currentLevel + b.value.currentXP)
+        }
+        leaderboardData.sort(sorting).reverse()
+        const slicedArray = leaderboardData.slice(0, lDta);
+        let returedArray = []
+        slicedArray.forEach(element => returedArray.push({ userID: element.value.userID, level: element.value.currentLevel, xp: element.value.currentXP }))
+        console.log(returedArray)
+        return returedArray
     }
 }
 

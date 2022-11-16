@@ -78,6 +78,12 @@
 
             ]
         },]
+    }, {
+        name: 'leaderboard',
+        description: 'Displays the server leaderboard',
+        options: [
+
+        ]
     },], {
         debug: false,
 
@@ -100,10 +106,10 @@
                 .setAvatar(slashMember.displayAvatarURL({ format: "png" }))
                 .setCurrentXP(await userData.currentXP)
                 .setRequiredXP(await userData.neededXP)
-                .setStatus("dnd")
+                .setStatus(slashMember.presence.status)
                 .setProgressBar("#FFFFFF", "COLOR")
-                .setUsername("Snowflake")
-                .setDiscriminator("0007")
+                .setUsername(slashMember.user.username)
+                .setDiscriminator(slashMember.user.discriminator)
                 .setLevel(await userData.currentLevel, 'Level', true)
                 .setRank(0, 'Rank', false)
 
@@ -114,23 +120,32 @@
                 });
 
         }
+        if ((interaction.commandName) == 'leaderboard') {
+            slashMember = (interaction.options.getMember('member'));
+            let leaderboardDB = await leveling.getLeaderboard(5)
+            let message = `#1${leaderboardDB[0].userID} level:${leaderboardDB[0].level} xp:${leaderboardDB[0].xp}\n#2${leaderboardDB[1].userID}-${leaderboardDB[1].level}xp:${leaderboardDB[1].xp}\n#3${leaderboardDB[2].userID}-${leaderboardDB[2].level}xp:${leaderboardDB[2].xp}\n#4${leaderboardDB[3].userID}-${leaderboardDB[3].level}xp:${leaderboardDB[3].xp}\n#5${leaderboardDB[4].userID}-${leaderboardDB[4].level}xp:${leaderboardDB[4].xp}`
 
+            await interaction.reply({
+                content: message,
+                ephemeral: true
+            });
+        }
     })
 
     s4d.client.on('messageCreate', async (param1) => {
         await leveling.checkData(param1.author.id, param1.guild.id)
-        if (param1.content == '.test01') {
-            s4d.joiningMember = param1;
-            s4d.client.channels.cache.get('1041049828525887568').send({
-                content: '** **',
-                files: [{
-                    attachment: (await new canvas.Welcome().setUsername(((s4d.joiningMember.author).username)).setMemberCount(((s4d.joiningMember.guild).memberCount)).setDiscriminator(((s4d.joiningMember.author).discriminator)).setAvatar(((s4d.joiningMember.author).displayAvatarURL({
-                        format: "png"
-                    }))).setGuildName(((s4d.joiningMember.guild).name)).setBackground('https://cdn.discordapp.com/attachments/1041372494717784186/1042354696171552788/unknown.png').setColor("title", "#ffffff").setColor("title-border", "#000000").setColor("hashtag", "#ffffff").setColor("hashtag", "#ffffff").toAttachment()).toBuffer()
-                }]
-            });
-            s4d.joiningMember = null
-        }
+        // if (param1.content == '.test01') {
+        //     s4d.joiningMember = param1;
+        //     s4d.client.channels.cache.get('1041049828525887568').send({
+        //         content: '** **',
+        //         files: [{
+        //             attachment: (await new canvas.Welcome().setUsername(((s4d.joiningMember.author).username)).setMemberCount(((s4d.joiningMember.guild).memberCount)).setDiscriminator(((s4d.joiningMember.author).discriminator)).setAvatar(((s4d.joiningMember.author).displayAvatarURL({
+        //                 format: "png"
+        //             }))).setGuildName(((s4d.joiningMember.guild).name)).setBackground('https://cdn.discordapp.com/attachments/1041372494717784186/1042354696171552788/unknown.png').setColor("title", "#ffffff").setColor("title-border", "#000000").setColor("hashtag", "#ffffff").setColor("hashtag", "#ffffff").toAttachment()).toBuffer()
+        //         }]
+        //     });
+        //     s4d.joiningMember = null
+        // }
     });
 
     s4d.client.on('guildMemberAdd', async (param1) => {
