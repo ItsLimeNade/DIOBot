@@ -123,8 +123,12 @@
         if ((interaction.commandName) == 'leaderboard') {
             slashMember = (interaction.options.getMember('member'));
             let leaderboardDB = await leveling.getLeaderboard(5)
-            let message = `#1${leaderboardDB[0].userID} level:${leaderboardDB[0].level} xp:${leaderboardDB[0].xp}\n#2${leaderboardDB[1].userID}-${leaderboardDB[1].level}xp:${leaderboardDB[1].xp}\n#3${leaderboardDB[2].userID}-${leaderboardDB[2].level}xp:${leaderboardDB[2].xp}\n#4${leaderboardDB[3].userID}-${leaderboardDB[3].level}xp:${leaderboardDB[3].xp}\n#5${leaderboardDB[4].userID}-${leaderboardDB[4].level}xp:${leaderboardDB[4].xp}`
-
+            let [message, count] = [[], 1]
+            leaderboardDB.forEach(element => {
+                message.push(`#${count} ${interaction.guild.members.cache.get(element.userID)} | Level: ${element.level} | XP ${element.xp}`)
+                count++
+            })
+            message = message.join('\n')
             await interaction.reply({
                 content: message,
                 ephemeral: true
